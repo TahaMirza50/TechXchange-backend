@@ -3,10 +3,6 @@ const Schema = mongoose.Schema
 
 const userProfile = new Schema({
 
-    id: {
-        type: Schema.Objectid,
-        required: true
-    },
     userName: {
         type: String,
         required: true
@@ -28,27 +24,35 @@ const userProfile = new Schema({
         required: true
     },
     rating: {
-        type: Number
+        type: Number,
+        min: 0,  
+        max: 5   
     },
     wishlistID: {
         type: Schema.Objectid
     },
-    reportsID: [{
-        type: Schema.Objectid
-    }],
+    reportsID: {
+        type: [Schema.Objectid]
+    },
     notificationsID: {
         type: Schema.Objectid
     },
-    chatrooms: [{
-        type: Schema.Objectid
-    }],
-    ratingsID: {
+    chatrooms: {
+        type: [Schema.Objectid]
+    },
+    reviewsID: {
         type: Schema.Objectid
     },
-    socialMediaLinks: [{
-        type: String,
-        required: true
-    }],
+    socialMediaLinks: {
+        type: [String],
+        required: true,
+        validate: {
+            validator: (links) => {
+                return links.length <= 3
+            },
+            message: 'Social media links can have at most 3 elements.'
+        }
+    },
 
 })
 
