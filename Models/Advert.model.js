@@ -1,56 +1,59 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const AdSchema = new mongoose.Schema({
-
-
-    userID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
-        required: true
-    }, 
-
-    title: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    price: {
-        type: Number,
-        required: true,
-      },
-
-      location: {
-        type: String,
-        required: true,
-      },
-
-      images: {
-        type: [String],
-        required: true,
-      },
-
-      sold: {
-        type: Boolean,
-        default: false,
-      },
-      createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-      },
-      wishlistedByUser: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'User',
-        default: [],
-      
-},
-},
-{
-    timestamps: true 
+const advertSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'UserProfile',
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  condition: {
+    type: String,
+    enum: ['new', 'used'],
+    required: true
+  },
+  categoryId: {
+    type: Schema.Types.ObjectId,
+    require: true
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  images: [{
+    type: String,
+    required: true,
+  }],
+  sold: {
+    type: Boolean,
+    default: false,
+  },
+  inReview: {
+    type: Boolean,
+    default: true,
+    required: true,
+  },
+  wishListedByUser: [{
+    type: Schema.Types.ObjectId,
+    ref: 'UserProfile',
+  }],
+  timestamp: {
+    type: Date,
+    required: true,
+  }
 });
 
-const adSchema = mongoose.model('AdverttismentSchema', AdSchema)
-module.exports = adSchema;
+const Advert = mongoose.model('Advert', advertSchema)
+module.exports = Advert;
