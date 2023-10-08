@@ -24,8 +24,8 @@ const userProfileSchema = new Schema({
     },
     rating: {
         type: Number,
-        min: 0,  
-        max: 5   
+        min: 0,
+        max: 5
     },
     wishlistID: {
         type: Schema.Types.ObjectId
@@ -37,7 +37,8 @@ const userProfileSchema = new Schema({
         type: Schema.Types.ObjectId
     },
     chatRooms: [{
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'ChatRoom'
     }],
     reviewsId: {
         type: Schema.Types.ObjectId

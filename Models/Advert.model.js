@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const AdvertSchema = Schema({
+const advertSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'UserProfile',
     required: true
   },
   title: {
@@ -19,6 +19,15 @@ const AdvertSchema = Schema({
     type: Number,
     required: true,
   },
+  condition: {
+    type: String,
+    enum: ['new', 'used'],
+    required: true
+  },
+  categoryId: {
+    type: Schema.Types.ObjectId,
+    require: true
+  },
   location: {
     type: String,
     required: true,
@@ -31,16 +40,20 @@ const AdvertSchema = Schema({
     type: Boolean,
     default: false,
   },
-  createdBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+  inReview: {
+    type: Boolean,
+    default: true,
     required: true,
   },
   wishListedByUser: [{
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'UserProfile',
   }],
+  timestamp: {
+    type: Date,
+    required: true,
+  }
 });
 
-const Advert = mongoose.model('Advert', AdvertSchema)
+const Advert = mongoose.model('Advert', advertSchema)
 module.exports = Advert;

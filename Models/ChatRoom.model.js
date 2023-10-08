@@ -7,10 +7,11 @@ const chatRoomSchema = new Schema({
         required: true
     },
     participants: [{
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: "UserProfile"
     }],
     messages: [{
-        userId: Schema.Types.ObjectId,
+        userId: { type: Schema.Types.ObjectId, ref: "UserProfile" },
         message: String,
         timestamp: Date
     }]
