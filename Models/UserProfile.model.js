@@ -29,19 +29,19 @@ const userProfile = new Schema({
         max: 5   
     },
     wishlistID: {
-        type: Schema.Objectid
+        type: Schema.Types.ObjectId
     },
     reportsID: {
-        type: [Schema.Objectid]
+        type: [Schema.Types.ObjectId]
     },
     notificationsID: {
-        type: Schema.Objectid
+        type: Schema.Types.ObjectId
     },
     chatrooms: {
-        type: [Schema.Objectid]
+        type: [Schema.Types.ObjectId]
     },
     reviewsID: {
-        type: Schema.Objectid
+        type: Schema.Types.ObjectId
     },
     socialMediaLinks: {
         type: [String],
@@ -57,6 +57,6 @@ const userProfile = new Schema({
 })
 
 
-const UserProfile = mongoose.model('User Profile', userProfile)
+const UserProfile = mongoose.model('UserProfile', userProfile)
 
 module.exports = UserProfile
