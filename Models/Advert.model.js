@@ -1,56 +1,46 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const AdSchema = new mongoose.Schema({
-
-
-    userID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
-        required: true
-    }, 
-
-    title: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    price: {
-        type: Number,
-        required: true,
-      },
-
-      location: {
-        type: String,
-        required: true,
-      },
-
-      images: {
-        type: [String],
-        required: true,
-      },
-
-      sold: {
-        type: Boolean,
-        default: false,
-      },
-      createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-      },
-      wishlistedByUser: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'User',
-        default: [],
-      
-},
-},
-{
-    timestamps: true 
+const AdvertSchema = Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  images: [{
+    type: String,
+    required: true,
+  }],
+  sold: {
+    type: Boolean,
+    default: false,
+  },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  wishListedByUser: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  }],
 });
 
-const adSchema = mongoose.model('AdverttismentSchema', AdSchema)
-module.exports = adSchema;
+const Advert = mongoose.model('Advert', AdvertSchema)
+module.exports = Advert;

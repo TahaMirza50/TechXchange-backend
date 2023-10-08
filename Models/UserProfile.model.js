@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const userProfile = new Schema({
-
+const userProfileSchema = new Schema({
     userName: {
         type: String,
         required: true
@@ -31,16 +30,16 @@ const userProfile = new Schema({
     wishlistID: {
         type: Schema.Types.ObjectId
     },
-    reportsID: {
-        type: [Schema.Types.ObjectId]
-    },
+    reportsID: [{
+        type: Schema.Types.ObjectId
+    }],
     notificationsID: {
         type: Schema.Types.ObjectId
     },
-    chatrooms: {
-        type: [Schema.Types.ObjectId]
-    },
-    reviewsID: {
+    chatRooms: [{
+        type: Schema.Types.ObjectId
+    }],
+    reviewsId: {
         type: Schema.Types.ObjectId
     },
     socialMediaLinks: {
@@ -53,10 +52,8 @@ const userProfile = new Schema({
             message: 'Social media links can have at most 3 elements.'
         }
     },
-
 })
 
 
-const UserProfile = mongoose.model('UserProfile', userProfile)
-
+const UserProfile = mongoose.model('UserProfile', userProfileSchema)
 module.exports = UserProfile
