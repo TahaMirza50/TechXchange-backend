@@ -24,24 +24,31 @@ const userProfileSchema = new Schema({
     },
     rating: {
         type: Number,
+        default: null,
         min: 0,
         max: 5
     },
     wishlistID: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'UserWishlist',
+        require: true
     },
     reportsID: [{
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'UserReport'
     }],
     notificationsID: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'NotificationsBox',
+        require: true
     },
     chatRooms: [{
         type: Schema.Types.ObjectId,
         ref: 'ChatRoom'
     }],
     reviewsId: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
     },
     socialMediaLinks: {
         type: [String],
