@@ -26,6 +26,7 @@ const advertSchema = new Schema({
   },
   categoryId: {
     type: Schema.Types.ObjectId,
+    ref: 'Category',
     require: true
   },
   location: {
@@ -43,7 +44,6 @@ const advertSchema = new Schema({
   inReview: {
     type: Boolean,
     default: true,
-    required: true,
   },
   wishListedByUser: [{
     type: Schema.Types.ObjectId,
@@ -51,6 +51,7 @@ const advertSchema = new Schema({
   }],
   timestamp: {
     type: Date,
+    default: Date.now,
     required: true,
   }
 });

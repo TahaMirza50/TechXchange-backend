@@ -13,10 +13,12 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
+        default: 'user',
+        enum: ['admin','user'],
         required: true
     },
     profileId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'UserProfile', 
       },
 });
