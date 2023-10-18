@@ -1,9 +1,12 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const userProfile = new Schema({
-
-    userName: {
+const userProfileSchema = new Schema({
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
         type: String,
         required: true
     },
@@ -16,7 +19,7 @@ const userProfile = new Schema({
         required: true
     },
     CNIC: {
-        type: Number,
+        type: String,
         required: true
     },
     birthday: {
@@ -25,23 +28,31 @@ const userProfile = new Schema({
     },
     rating: {
         type: Number,
-        min: 0,  
-        max: 5   
+        default: null,
+        min: 0,
+        max: 5
     },
     wishlistID: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'UserWishlist',
+        require: true
     },
-    reportsID: {
-        type: [Schema.Types.ObjectId]
-    },
+    reportsID: [{
+        type: Schema.Types.ObjectId,
+        ref: 'UserReport'
+    }],
     notificationsID: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'NotificationsBox',
+        require: true
     },
-    chatrooms: {
-        type: [Schema.Types.ObjectId]
-    },
+    chatRooms: [{
+        type: Schema.Types.ObjectId,
+        ref: 'ChatRoom'
+    }],
     reviewsID: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
     },
     socialMediaLinks: {
         type: [String],
@@ -53,10 +64,8 @@ const userProfile = new Schema({
             message: 'Social media links can have at most 3 elements.'
         }
     },
-
 })
 
 
-const UserProfile = mongoose.model('UserProfile', userProfile)
-
+const UserProfile = mongoose.model('UserProfile', userProfileSchema)
 module.exports = UserProfile
