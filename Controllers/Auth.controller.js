@@ -3,15 +3,18 @@ const UserProfile = require('../Models/UserProfile.model');
 const UserWishlist = require('../Models/UserWishlist.model');
 const NotificationsBox = require('../Models/NotificationsBox.model');
 const Review = require('../Models/Review.model');
-const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 
-const register = async (req,res) => {
-    user = await User.findOne({email:req.body.email});
-    if(user != null){
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const register = async (req, res) => {
+    user = await User.findOne({ email: req.body.email });
+    if (user != null) {
         return res.status(400).send('Email already exist, Please login.');
     }
     try {
-        encryptedPass = await bcrypt.hash(req.body.password,10); 
+        encryptedPass = await bcrypt.hash(req.body.password, 10);
         user = new User({
             email: req.body.email,
             password: encryptedPass,
@@ -54,13 +57,41 @@ const register = async (req,res) => {
             notificationsBox.save(),
             review.save()
         ]);
-    
+
         res.status(201).send(result1);
 
     } catch (error) {
         console.log(error.message)
         res.status(500).send();
     }
-}
+};
 
-module.exports = {register};
+const login = async (req, res) => {
+    const user = await User.findOne({ email: req.body.email });
+    console.log(user);
+    if (user == null) {
+        return res.status(400).send('Cannot find user, Please register.');
+    }
+
+    try {
+        if (await bcrypt.compare(req.body.password, user.password)) {
+            console.log(user.profileID)
+            const accessToken = jwt.sign({ profileID: user.profileID, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            const refreshToken = jwt.sign({ profileID: user.profileID, role: user.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
+            res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
+        } else {
+            return res.status(400).send("Password doesn't match.");
+        };
+    } catch (error) {
+        console.log(error.message)
+        res.sendStatus(500);
+    }
+
+};
+
+const getAccessToken = async (req,res) => {
+    const accessToken = jwt.sign({ profileID: req.user.profileID, role: req.user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+    res.status(200).json({accessToken: accessToken});
+};
+
+module.exports = { register, login, getAccessToken };
