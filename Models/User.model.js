@@ -17,7 +17,7 @@ const userSchema = new Schema({
         enum: ['admin','user'],
         required: true
     },
-    profileId: {
+    profileID: {
         type: Schema.Types.ObjectId,
         ref: 'UserProfile', 
       },

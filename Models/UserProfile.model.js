@@ -2,7 +2,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const userProfileSchema = new Schema({
-    userName: {
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
         type: String,
         required: true
     },
@@ -15,7 +19,7 @@ const userProfileSchema = new Schema({
         required: true
     },
     CNIC: {
-        type: Number,
+        type: String,
         required: true
     },
     birthday: {
@@ -46,7 +50,7 @@ const userProfileSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'ChatRoom'
     }],
-    reviewsId: {
+    reviewsID: {
         type: Schema.Types.ObjectId,
         ref: 'Review'
     },
