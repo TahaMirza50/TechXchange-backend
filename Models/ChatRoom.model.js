@@ -4,7 +4,6 @@ const Schema = mongoose.Schema
 const chatRoomSchema = new Schema({
     advertId: {
         type: Schema.Types.ObjectId,
-        required: true
     },
     participants: [{
         type: Schema.Types.ObjectId,
