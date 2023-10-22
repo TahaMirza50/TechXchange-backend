@@ -3,7 +3,6 @@ const UserProfile = require('../Models/UserProfile.model');
 const UserWishlist = require('../Models/UserWishlist.model');
 const NotificationsBox = require('../Models/NotificationsBox.model');
 const Review = require('../Models/Review.model');
-const mongoose = require('mongoose');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -61,7 +60,6 @@ const register = async (req, res) => {
         res.status(201).send(result1);
 
     } catch (error) {
-        console.log(error.message)
         res.status(500).send();
     }
 };
