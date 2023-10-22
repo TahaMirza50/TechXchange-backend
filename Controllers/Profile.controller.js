@@ -6,15 +6,15 @@ const getProfile = async (req, res) => {
     const id = req.user.profileID
 
     if (!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({error: 'invalid'})
+        return res.status(404).send('invalid')
     }
 
     try{
         userProfile = await UserProfile.findById(req.user.profileID)
         if(!userProfile) {
-            return res.status(404).json({error: 'No such Profile'})
+            return res.status(404).send('No such Profile')
         }
-        res.status(200).send(userProfile)
+        res.status(200).json(userProfile)
     }
     catch(error){
         console.log(error)
@@ -26,7 +26,7 @@ const updateProfile = async (req, res) => {
     const id = req.user.profileID
 
     if (!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({error: 'invalid'})
+        return res.status(404).send('invalid')
     }
 
     try{
@@ -35,7 +35,7 @@ const updateProfile = async (req, res) => {
         })
     
         if(!userProfile) {
-            return res.status(404).json({error: 'No such Profile'})
+            return res.status(404).send('No such Profile')
         }
     
         res.status(200).json(userProfile)
