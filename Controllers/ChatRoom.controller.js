@@ -1,4 +1,5 @@
 const ChatRoom = require('../Models/ChatRoom.model');
+const NotificationsBox = require('../Models/NotificationsBox.model');
 const UserProfile = require('../Models/UserProfile.model');
 const mongoose = require('mongoose');
 
@@ -11,18 +12,15 @@ const getAllChatRooms = async (req, res) => {
     }
 
     try {
-        const result = await UserProfile.findById(req.user.profileID);
+        const result = await UserProfile.findById(req.user.profileID).select('chatRooms').populate({
+            path: 'chatRooms',
+            populate: {
+              path: 'participants', 
+              select: 'firstName lastName'
+            }
+          });
 
-        const chatsArray = [];
-        for (const chat of result.chatRooms) {
-            const c = await ChatRoom.findById(chat).populate({
-                path: 'participants',
-                select: 'firstName lastName'
-            });
-
-            chatsArray.push(c);
-        };
-        res.status(200).send(chatsArray)
+        res.status(200).send(result)
     } catch (error) {
         console.log(error)
         res.status(500)
@@ -84,17 +82,15 @@ const createChatRoom = async (req, res) => {
     try {
 
         const filter = {
-            // 'advertID': req.body.advertID,
+            'advertID': req.body.advertID,
             'participants': { $all: req.body.participants }
         };
-        console.log(filter);
 
         const result = await ChatRoom.findOne(filter);
-        console.log(result)
 
         if (result == null) {
             chatRoom = new ChatRoom({
-                advertID: req.body.advertID,
+                advertId: req.body.advertID,
             });
 
             chatRoom.participants.push(req.body.participants[0]);
@@ -144,4 +140,45 @@ const createChatRoom = async (req, res) => {
 
 };
 
-module.exports = { getAllChatRooms, deleteChatRoom, createChatRoom };
+const sendMessage = async (req, res) => {
+
+    const userID = req.user.profileID;
+    const chatID = req.body.chatID;
+
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
+        return res.status(404).json({ error: 'invalid' });
+    }
+
+    try {
+        const chat = await ChatRoom.findById(chatID);
+
+        for (const part of chat.participants) {
+
+            if (part != userID) {
+                const userProfile = await UserProfile.findById(part);
+
+                if (!userProfile.chatRooms.includes(chatID)) {
+                    userProfile.chatRooms.push(chatID);
+                    await userProfile.save();
+                }
+
+                const notBox = await NotificationsBox.findById(userProfile.notificationsID);
+                console.log(chat.advert)
+                notBox.notifications.push({ type: "message_received", advertId: chat.advertId });
+                await notBox.save();
+            }
+        }
+
+        chat.messages.push({ userID: userID, message: req.body.message });
+
+        await chat.save();
+
+        res.status(200).send(chat);
+
+    } catch (error) {
+        console.log(error)
+        res.status(500)
+    }
+};
+
+module.exports = { getAllChatRooms, deleteChatRoom, createChatRoom, sendMessage };

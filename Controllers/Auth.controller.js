@@ -30,17 +30,17 @@ const register = async (req, res) => {
         });
 
         wishlist = new UserWishlist({
-            userId: user._id,
+            userId: userProfile._id,
             wishlist: [],
         });
 
         notificationsBox = new NotificationsBox({
-            userID: user._id,
+            userID: userProfile._id,
             notifications: [],
         });
 
         review = new Review({
-            userID: user._id,
+            userID: userProfile._id,
             ratings: [],
         });
 
