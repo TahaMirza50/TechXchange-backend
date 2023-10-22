@@ -11,7 +11,7 @@ const chatRoomSchema = new Schema({
         required: true
     }],
     messages: [{
-        userId: { 
+        userID: { 
             type: Schema.Types.ObjectId, 
             ref: "UserProfile",
             required: true 
