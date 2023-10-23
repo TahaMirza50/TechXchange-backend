@@ -11,10 +11,6 @@ const notificationsBoxSchema = new Schema({
     notifications:
         [
             {
-                notId: {
-                    type: Schema.Types.ObjectId,
-                    required: true
-                },
                 type: {
                     type: String,
                     enum: ['fav_add_sold', 'add_approved', 'message_received'],
@@ -29,10 +25,6 @@ const notificationsBoxSchema = new Schema({
                     type: Date,
                     default: Date.now 
                 },
-                message: { 
-                    type: String,
-                    required: true 
-                }
             }
         ]
 });

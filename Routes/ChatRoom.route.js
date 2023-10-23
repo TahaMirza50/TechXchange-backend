@@ -1,6 +1,6 @@
-const Router = require('express');
+const express = require('express');
 
-const router = Router();
+const router = express.Router();
 
 const chatRoomController = require('../Controllers/ChatRoom.controller');
 const authMiddleware = require('../Middleware/Auth.middleware');
@@ -10,5 +10,7 @@ router.get('/',authMiddleware.authenticateUser, chatRoomController.getAllChatRoo
 router.delete('/delete/:chatRoomID', authMiddleware.authenticateUser, chatRoomController.deleteChatRoom);
 
 router.post('/create', authMiddleware.authenticateUser, chatRoomController.createChatRoom);
+
+router.patch('/sendmessage', authMiddleware.authenticateUser, chatRoomController.sendMessage);
 
 module.exports = router;
