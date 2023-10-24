@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const UserProfile = require('../Models/UserProfile.model')
 const Advert = require('../Models/Advert.model')
+const UserWishlist = require('../Models/UserWishlist.model')
 
 const addAdvertWishlist = async (req, res) => {
 
@@ -11,10 +11,12 @@ const addAdvertWishlist = async (req, res) => {
     }
 
     try{
-        const user_profile = await UserProfile.findById(req.user.profileID).populate('wishlistID')
+        const userWishlist = await UserWishlist.findOne({userId: req.user.profileID})
         const advert = await Advert.findById(advertid)
         advert.wishListedByUser.push(req.user.profileID)
-        user_profile.wishlistID.wishlist.push(advertid)
+        userWishlist.wishlist.push(advertid)
+        await advert.save()
+        await userWishlist.save()
         res.status(200).send("advert added to wishlist successfully!")
     }
     catch(error){
@@ -32,14 +34,16 @@ const removeAdvertWishlist = async (req, res) => {
     }
 
     try{
-        const user_profile = await UserProfile.findById(req.user.profileID).populate('wishlistID')
+        const userWishlist = await UserWishlist.findOne({userId: req.user.profileID})
         const advert = await Advert.findById(advertid)
         advert.wishListedByUser = advert.wishListedByUser.filter((userProfileId) => {
             return userProfileId != req.user.profileID
         })
-        user_profile.wishlistID.wishlist = user_profile.wishlistID.wishlist.filter( (id) => {
+        userWishlist.wishlist = userWishlist.wishlist.filter( (id) => {
             return id != advertid
         })
+        await advert.save()
+        await userWishlist.save()
         res.status(200).send("advert removed from wishlist successfully!")
     }
     catch(error){
@@ -50,14 +54,9 @@ const removeAdvertWishlist = async (req, res) => {
 
 const getAdvertsWishlist = async (req,res) => {
     try{
-        const user_profile = await UserProfile.findById(req.user.profileID).populate({
-            path: 'wishlistID',
-            populate: {
-                path: 'wishlist'
-            }
-        })
+        const userWishlist = await UserWishlist.findOne({userId: req.user.profileID}).populate('wishlist')
 
-        res.status(200).json(user_profile.wishlistID.wishlist)
+        res.status(200).json(userWishlist.wishlist)
     }
     catch(error){
         console.log(error)
@@ -67,9 +66,9 @@ const getAdvertsWishlist = async (req,res) => {
 
 const getWishlist = async (req,res) => {
     try{
-        const user_profile = await UserProfile.findById(req.user.profileID).populate('wishlistID')
+        const userWishlist = await UserWishlist.findOne({userId: req.user.profileID})
 
-        res.status(200).json(user_profile.wishlistID.wishlist)
+        res.status(200).json(userWishlist.wishlist)
     }
     catch(error){
         console.log(error)
