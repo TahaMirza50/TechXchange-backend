@@ -161,9 +161,9 @@ const sendMessage = async (req, res) => {
                     userProfile.chatRooms.push(chatID);
                     await userProfile.save();
                 }
-
+                console.log(userProfile.notificationsID);
                 const notBox = await NotificationsBox.findById(userProfile.notificationsID);
-                console.log(chat.advert)
+                console.log(notBox)
                 notBox.notifications.push({ type: "message_received", advertId: chat.advertId });
                 await notBox.save();
             }
