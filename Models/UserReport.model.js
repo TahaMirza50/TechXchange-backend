@@ -7,11 +7,6 @@ const userReportSchema = new Schema({
         ref: 'UserProfile',
         required: true
     },
-    reportedUserId: {
-        type: Schema.Types.ObjectId,
-        ref: 'UserProfile',
-        required: true
-    },
     advertId: {
         type: Schema.Types.ObjectId,
         ref: 'Advert',
@@ -21,7 +16,7 @@ const userReportSchema = new Schema({
         type: String
     },
     inReview: {
-        type: boolean,
+        type: Boolean,
         default: true
     }
 });

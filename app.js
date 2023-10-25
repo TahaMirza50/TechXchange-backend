@@ -12,17 +12,21 @@ const PORT = process.env.PORT || 3000;
 const authRoutes = require('./Routes/Auth.route');
 const profileRoutes = require('./Routes/Profile.route')
 const chatRoomRoutes = require('./Routes/ChatRoom.route');
-const wishlistRoutes = require('./Routes/Wishlist.route')
-const notificationRoutes = require('./Routes/Notification.route')
+const wishlistRoutes = require('./Routes/Wishlist.route');
+const notificationRoutes = require('./Routes/Notification.route');
+const reportRoutes = require('./Routes/Report.route');
+const advertRoutes = require('./Routes/Advert.route')
 
 connectDB();
 
 // .use routes here
 app.use('/api/auth',authRoutes);
 app.use('/api/profile',profileRoutes)
+app.use('/api/advert',advertRoutes)
 app.use('/api/chatroom',chatRoomRoutes);
-app.use('/api/wishlist',wishlistRoutes)
-app.use('/api/notifications',notificationRoutes)
+app.use('/api/wishlist',wishlistRoutes);
+app.use('/api/notifications',notificationRoutes);
+app.use('/api/report',reportRoutes);
 
 app.listen(PORT, () => {
     console.log("server started on port " + PORT + "...");
