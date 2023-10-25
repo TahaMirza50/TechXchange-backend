@@ -181,4 +181,24 @@ const sendMessage = async (req, res) => {
     }
 };
 
-module.exports = { getAllChatRooms, deleteChatRoom, createChatRoom, sendMessage };
+const getChatroom = async (req, res) => {
+    
+    const advertID = req.params.advertid
+    const id = req.user.profileID
+    if (!mongoose.Types.ObjectId.isValid(advertID) || !mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).send("invalid id")
+    }
+    
+
+    try{
+        const chatRoom = await ChatRoom.findOne({advertId: advertID, participants: { $in: [id] }})
+        res.status(200).json(chatRoom)
+    }
+    catch(error){
+        console.log(error)
+        res.status(500)
+    }
+    
+}
+
+module.exports = { getAllChatRooms, deleteChatRoom, createChatRoom, sendMessage, getChatroom };
