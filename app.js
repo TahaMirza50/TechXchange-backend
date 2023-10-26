@@ -17,6 +17,7 @@ const notificationRoutes = require('./Routes/Notification.route')
 const reviewRoutes = require('./Routes/Review.route')
 const adminRoutes = require('./Routes/Admin.route')
 const reportRoutes = require('./Routes/Report.route');
+const categoryRoutes = require('./Routes/Category.route');
 
 connectDB();
 
@@ -30,6 +31,7 @@ app.use('/api/notifications',notificationRoutes)
 app.use('/api/reviewforms', reviewRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/report',reportRoutes);
+app.use('/api/category',categoryRoutes);
 
 app.listen(PORT, () => {
     console.log("server started on port " + PORT + "...");
