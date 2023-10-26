@@ -13,4 +13,6 @@ router.post('/create', authMiddleware.authenticateUser, chatRoomController.creat
 
 router.patch('/sendmessage', authMiddleware.authenticateUser, chatRoomController.sendMessage);
 
+router.get('/advert/:advertid', authMiddleware.authenticateUser, chatRoomController.getChatroom)
+
 module.exports = router;

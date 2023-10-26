@@ -5,15 +5,15 @@ const UserWishlist = require('../Models/UserWishlist.model')
 const addAdvertWishlist = async (req, res) => {
 
     const advertid = req.params.advertid
-
-    if (!mongoose.Types.ObjectId.isValid(advertid)){
+    const id = req.user.profileID
+    if (!mongoose.Types.ObjectId.isValid(advertid) || !mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).send("invalid id")
     }
 
     try{
-        const userWishlist = await UserWishlist.findOne({userId: req.user.profileID})
+        const userWishlist = await UserWishlist.findOne({userId: id})
         const advert = await Advert.findById(advertid)
-        advert.wishListedByUser.push(req.user.profileID)
+        advert.wishListedByUser.push(id)
         userWishlist.wishlist.push(advertid)
         await advert.save()
         await userWishlist.save()
@@ -28,16 +28,16 @@ const addAdvertWishlist = async (req, res) => {
 const removeAdvertWishlist = async (req, res) => {
 
     const advertid = req.params.advertid
-
-    if (!mongoose.Types.ObjectId.isValid(advertid)){
-        return res.status(404).send('invalid')
+    const id = req.user.profileID
+    if (!mongoose.Types.ObjectId.isValid(advertid) || !mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).send("invalid id")
     }
 
     try{
-        const userWishlist = await UserWishlist.findOne({userId: req.user.profileID})
+        const userWishlist = await UserWishlist.findOne({userId: id})
         const advert = await Advert.findById(advertid)
         advert.wishListedByUser = advert.wishListedByUser.filter((userProfileId) => {
-            return userProfileId != req.user.profileID
+            return userProfileId != id
         })
         userWishlist.wishlist = userWishlist.wishlist.filter( (id) => {
             return id != advertid
@@ -53,8 +53,13 @@ const removeAdvertWishlist = async (req, res) => {
 }
 
 const getAdvertsWishlist = async (req,res) => {
+    const id = req.user.profileID
+    if (!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).send("invalid id")
+    }
+
     try{
-        const userWishlist = await UserWishlist.findOne({userId: req.user.profileID}).populate('wishlist')
+        const userWishlist = await UserWishlist.findOne({userId: id}).populate('wishlist')
 
         res.status(200).json(userWishlist.wishlist)
     }
@@ -65,8 +70,13 @@ const getAdvertsWishlist = async (req,res) => {
 }
 
 const getWishlist = async (req,res) => {
+    const id = req.user.profileID
+    if (!mongoose.Types.ObjectId.isValid(advertid) || !mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).send("invalid id")
+    }
+
     try{
-        const userWishlist = await UserWishlist.findOne({userId: req.user.profileID})
+        const userWishlist = await UserWishlist.findOne({userId: id})
 
         res.status(200).json(userWishlist.wishlist)
     }
