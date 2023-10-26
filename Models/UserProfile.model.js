@@ -32,6 +32,12 @@ const userProfileSchema = new Schema({
         min: 0,
         max: 5
     },
+    numberOfReviews: {
+        type: Number,
+        default: null,
+        min: 0,
+        max: 5
+    },
     wishlistID: {
         type: Schema.Types.ObjectId,
         ref: 'UserWishlist',
