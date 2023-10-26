@@ -71,7 +71,7 @@ const getAdvertsWishlist = async (req,res) => {
 
 const getWishlist = async (req,res) => {
     const id = req.user.profileID
-    if (!mongoose.Types.ObjectId.isValid(advertid) || !mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).send("invalid id")
     }
 
