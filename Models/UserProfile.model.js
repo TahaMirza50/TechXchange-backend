@@ -34,9 +34,7 @@ const userProfileSchema = new Schema({
     },
     numberOfReviews: {
         type: Number,
-        default: null,
-        min: 0,
-        max: 5
+        default: 0
     },
     wishlistID: {
         type: Schema.Types.ObjectId,
