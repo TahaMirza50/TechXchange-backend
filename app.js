@@ -17,7 +17,8 @@ const notificationRoutes = require('./Routes/Notification.route')
 const reviewRoutes = require('./Routes/Review.route')
 const adminRoutes = require('./Routes/Admin.route')
 const reportRoutes = require('./Routes/Report.route');
-const advertRoutes = require('./Routes/Advert.route')
+const advertRoutes = require('./Routes/Advert.route');
+
 connectDB();
 
 // .use routes here

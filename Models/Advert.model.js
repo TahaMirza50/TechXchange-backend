@@ -53,6 +53,11 @@ const advertSchema = new Schema({
     type: Date,
     default: Date.now,
     required: true,
+  },
+  delete: {
+    type: Boolean,
+    default: false,
+    required: true
   }
 });
 
