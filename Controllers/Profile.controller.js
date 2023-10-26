@@ -44,10 +44,33 @@ const updateProfile = async (req, res) => {
         console.log(error)
         res.status(500)
     }
-
     
-}
+};
+
+const getProfileById = async (req,res) => {
+
+    const id = req.user.profileID
+
+    if (!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).send('invalid')
+    }
+
+    try {  
+
+        const result = await UserProfile.findById(req.params.profileId).select('firstName lastName contact address CNIC rating socialMediaLinks');
+
+        if (!result) {
+            return res.status(404).json({ error: 'No profile found.' });
+        }
+
+        res.status(200).send(result);
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500)
+    }
+
+};
 
 
-
-module.exports = {getProfile, updateProfile}
+module.exports = {getProfile, updateProfile, getProfileById}
