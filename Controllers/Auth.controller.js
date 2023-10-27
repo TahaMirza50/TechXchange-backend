@@ -8,6 +8,22 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const register = async (req, res) => {
+    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+
+    if (!emailPattern.test(req.body.email)) {
+        return res.status(501).send('Invalid email address')
+    }
+
+    const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/
+
+    if (req.body.password.length < 8) {
+        return res.status(501).send('Password must be at least 8 characters long')
+    }
+
+    if (!passwordPattern.test(req.body.password)) {
+        return res.status(501).send('Password must include at least one digit, one lowercase, and one uppercase letter')
+    }
+
     user = await User.findOne({ email: req.body.email });
     if (user != null) {
         return res.status(400).send('Email already exist, Please login.');
