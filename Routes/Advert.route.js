@@ -14,17 +14,16 @@ router.patch('/new/upload/:advertId', authMiddleware.authenticateUser,upload.arr
 
 router.get('/admin/:advertId', authMiddleware.authenticateAdmin, advertController.getAdvertByAdmin);
 
-// Update an advertisement by ID
-router.put('/:id', advertController.updateAdvert);
+router.patch('update/:advertId', authMiddleware.authenticateUser, advertController.updateAdvert);
 
 // Delete an advertisement by ID
 router.delete('/:id', advertController.deleteAdvert);
 
-// Get all advertisements of a user
-router.get('/user/:userId', advertController.getAllAdvertsOfUser);
+router.get('/get', authMiddleware.authenticateUser, advertController.getAllAdvertsOfUser);
 
-// Get a single advertisement that has been reviewed
-router.get('/:id/reviewed', advertController.getReviewedAdvert);
+router.get('/get/:advertId', authMiddleware.authenticateUser, advertController.getAdvert);
+
+router.get('/get/:categoryId', authMiddleware.authenticateUser ,advertController.getAdvertsByCategory);
 
 // Get advertisements that have been reviewed and match a search criteria
 router.get('/search', advertController.getReviewedAdvertsBySearch);

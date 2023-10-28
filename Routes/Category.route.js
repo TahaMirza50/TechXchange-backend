@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { createCategory,categoryController, getAllCategories} = require('../Controllers/Category.controller');
 
-// Get all advertisements in a specific category
-router.get('/:categoryName/adverts', categoryController.getAdvertsByCategory);
+const authMiddleware = require('../Middleware/Auth.middleware');
+const categoryController = require('../Controllers/Category.controller');
 
-// Route to create a category by an admin
-router.post('/admin/create', createCategory);
+router.post('/admin/create', authMiddleware.authenticateAdmin, categoryController.createCategory);
 
-// Route to get all categories by an admin
-router.get('/admin/all', getAllCategories);
+router.get('/admin/all', authMiddleware.authenticateAdmin, categoryController.getAllCategoriesByAdmin);
 
 module.exports = router;
