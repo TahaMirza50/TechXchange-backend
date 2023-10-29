@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const UserProfile = require('../Models/UserProfile.model')
+const Advert = require('../Models/Advert.model'); 
+const Notification = require('../Models/NotificationsBox.model'); 
 
 const getUserRatings = async (req,res) => {
 
@@ -12,6 +14,6 @@ const getUserRatings = async (req,res) => {
         res.status(500)
     }
 
-}
+};
 
 module.exports = {getUserRatings}

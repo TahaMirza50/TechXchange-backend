@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const UserProfile = require('../Models/UserProfile.model')
 const NotificationsBox = require('../Models/NotificationsBox.model')
 
 const getNotificationBox = async (req,res) => {
@@ -10,8 +9,8 @@ const getNotificationBox = async (req,res) => {
     }
 
     try{
-        const userProfile = await UserProfile.findById(id).populate('notificationsID')
-        const notifications = userProfile.notificationsID.notifications
+        const notificationsBox = await NotificationsBox.findOne({userID: id})
+        const notifications = notificationsBox.notifications
         res.status(200).json(notifications)
     }
     catch(error){
