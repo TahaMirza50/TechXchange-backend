@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const Advert = require('../Models/Advert.model');
-const Review = require('../Models/Review.model');
-const Notification = require('../Models/NotificationsBox.model');
+const UserWishlist = require('../Models/UserWishlist.model');
 const cloudinary = require("../Configuration/Cloudinary.config");
 const NotificationsBox = require('../Models/NotificationsBox.model');
+const UserProfile = require('../Models/UserProfile.model');
+const ChatRoom = require('../Models/ChatRoom.model');
 
 const newAdvert = async (req, res) => {
 
@@ -103,25 +104,36 @@ const updateAdvert = async (req, res) => {
   }
 };
 
-// Soft Delete an advertisement by User
-exports.softDeleteAdvertisement = async (req, res) => {
-  const advertId = req.params.advertId;
+const deleteAdvert = async (req, res) => {
+
+  const userID = req.user.profileID;
+
+  if (!mongoose.Types.ObjectId.isValid(userID)) {
+    return res.status(404).json({ error: 'invalid' });
+  }
+
+  const advertID = req.params.advertId;
 
   try {
-    const advert = await Advert.findByIdAndUpdate(advertId, { isDeleted: true }, { new: true });
-
-    if (!advert) {
+    const result = await Advert.findOneAndUpdate({ _id: advertID, userId: userID, delete: false }, { delete: true }, { new: true });
+  
+    if (!result) {
       return res.status(404).json({ message: 'Advertisement not found' });
     }
 
-    for (const user in advert.wishListedByUser) {
-
+    for (const part of result.wishListedByUser) {
+      const userProfile = await UserProfile.findById(part).select('wishlistID');
+      const userWishlist = await UserWishlist.findById(userProfile.wishlistID);
+      userWishlist.wishlist.pull(advertID);
+      await userWishlist.save();
     }
 
-    res.status(200).send(advert);
-  } catch (err) {
-    res.status(500).send(err);
+    res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
+
 };
 
 const getAllAdvertsOfUser = async (req, res) => {
@@ -196,34 +208,39 @@ exports.getAdvertsBySearch = async (req, res) => {
   }
 };
 
-const markAdvertSold = async (req,res) => {
-  
+const markAdvertSold = async (req, res) => {
+
   const advertId = req.params.advertId;
   const userId = req.user.profileID;
 
   try {
     const advert = await Advert.findById(advertId);
 
-    if(!advert){
+    if (!advert) {
       return res.status(404).json({ message: 'Advertisement not found' });
     }
 
-    console.log(advert.userId, userId);
-    if(advert.userId != userId){
+    if (advert.userId != userId) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
     advert.sold = true;
     await advert.save();
 
-    for(const part of advert.wishListedByUser){
+    for (const part of advert.wishListedByUser) {
       const notificationBox = await NotificationsBox.findOne({ userID: part });
       notificationBox.notifications.push({ type: 'fav_add_sold', advertId: advertId });
       await notificationBox.save();
     };
 
+    const updatedChatRooms = await ChatRoom.find({ advertId: advertId, disabled: false });
+    for (const chat of updatedChatRooms) {
+      chat.disabled = true;
+      await chat.save();
+    }
+
     res.status(200).send(advert);
-    
+
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -293,6 +310,6 @@ const getInReviewAdvertByAdmin = async (req, res) => {
 };
 
 module.exports = {
-  newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert, markAdvertSold, 
+  newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert, markAdvertSold, deleteAdvert,
   getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin
 };
