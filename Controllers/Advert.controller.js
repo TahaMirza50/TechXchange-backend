@@ -81,7 +81,6 @@ const getAdvertByAdmin = async (req, res) => {
   }
 };
 
-// Update an advertisement by ID
 const updateAdvert = async (req, res) => {
 
   const userID = req.user.profileID;
@@ -125,8 +124,6 @@ exports.softDeleteAdvertisement = async (req, res) => {
   }
 };
 
-
-// Get all advertisements of a user
 const getAllAdvertsOfUser = async (req, res) => {
   const userID = req.user.profileID;
 
@@ -144,7 +141,6 @@ const getAllAdvertsOfUser = async (req, res) => {
   }
 };
 
-// Get a single advertisement that has been reviewed
 const getAdvert = async (req, res) => {
   const advertId = req.params.advertId;
 
@@ -200,80 +196,37 @@ exports.getAdvertsBySearch = async (req, res) => {
   }
 };
 
-// Mark an advertisement as sold and send a notification
-exports.markAdvertisementAsSold = async (req, res) => {
-  const { id } = req.params;
+const markAdvertSold = async (req,res) => {
+  
+  const advertId = req.params.advertId;
+  const userId = req.user.profileID;
 
   try {
-    const advert = await Advert.findByIdAndUpdate(id, { isSold: true }, { new: true });
+    const advert = await Advert.findById(advertId);
 
-    if (!advert) {
+    if(!advert){
       return res.status(404).json({ message: 'Advertisement not found' });
     }
 
-    // Create and send a notification to the user
-    const notification = new Notification({
-      userId: advert.createdBy, // Assuming 'createdBy' is the user who created the advertisement
-      message: `Your advertisement '${advert.title}' has been marked as sold.`,
-    });
-
-    await notification.save();
-
-    res.json(advert);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-};
-
-// Function to reject a review advertisement and send a notification
-exports.rejectAdvert = async (req, res) => {
-  const { advertId } = req.params;
-
-  try {
-    // Update the advertisement status to 'approved' or as needed
-    const updatedAdvert = await Advert.findByIdAndUpdate(advertId, { status: 'rejected' }, { new: true });
-
-    if (!updatedAdvert) {
-      return res.status(404).json({ message: 'Advertisement not found' });
+    console.log(advert.userId, userId);
+    if(advert.userId != userId){
+      return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // Create and send a notification to the user
-    const notification = new Notification({
-      userId: updatedAdvert.userId, // Set the user ID of the advertisement owner
-      message: 'Your advertisement has been rejected by the admin.',
-    });
+    advert.sold = true;
+    await advert.save();
 
-    await notification.save();
+    for(const part of advert.wishListedByUser){
+      const notificationBox = await NotificationsBox.findOne({ userID: part });
+      notificationBox.notifications.push({ type: 'fav_add_sold', advertId: advertId });
+      await notificationBox.save();
+    };
 
-    res.json(updatedAdvert);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-};
-
-// Function to approve a review advertisement and send a notification
-exports.approveAdvert = async (req, res) => {
-  const { advertId } = req.params;
-
-  try {
-    // Update the advertisement status to 'approved' or as needed
-    const updatedAdvert = await Advert.findByIdAndUpdate(advertId, { status: 'approved' }, { new: true });
-
-    if (!updatedAdvert) {
-      return res.status(404).json({ message: 'Advertisement not found' });
-    }
-
-    // Create and send a notification to the user
-    const notification = new Notification({
-      userId: updatedAdvert.userId, // Set the user ID of the advertisement owner
-      message: 'Your advertisement has been approved by the admin.',
-    });
-
-    await notification.save();
-
-    res.json(updatedAdvert);
-  } catch (err) {
-    res.status(500).send(err);
+    res.status(200).send(advert);
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -340,6 +293,6 @@ const getInReviewAdvertByAdmin = async (req, res) => {
 };
 
 module.exports = {
-  newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert,
+  newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert, markAdvertSold, 
   getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin
 };
