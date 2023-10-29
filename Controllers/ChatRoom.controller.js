@@ -150,7 +150,7 @@ const sendMessage = async (req, res) => {
     }
 
     try {
-        const chat = await ChatRoom.findById(chatID);
+        const chat = await ChatRoom.findOne({ _id: chatID, disabled: false });
 
         for (const part of chat.participants) {
 

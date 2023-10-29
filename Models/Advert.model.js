@@ -41,9 +41,10 @@ const advertSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  inReview: {
-    type: Boolean,
-    default: true,
+  status: {
+    type: String,
+    enum: ['approved', 'rejected', 'in review'],
+    default: 'in review',
   },
   wishListedByUser: [{
     type: Schema.Types.ObjectId,
