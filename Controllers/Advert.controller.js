@@ -3,6 +3,7 @@ const Advert = require('../Models/Advert.model');
 const Review = require('../Models/Review.model');
 const Notification = require('../Models/NotificationsBox.model');
 const cloudinary = require("../Configuration/Cloudinary.config");
+const NotificationsBox = require('../Models/NotificationsBox.model');
 
 const newAdvert = async (req, res) => {
 
@@ -162,13 +163,13 @@ const getAdvert = async (req, res) => {
 };
 
 const getAdvertsByCategory = async (req, res) => {
-  
+
   const categoryId = req.params.categoryId;
 
   try {
     const advertsInCategory = await Advertisement.find({ category: categoryId, delete: false, status: 'approved' })
-    .sort({ timestamp: -1 })
-    .limit(10);
+      .sort({ timestamp: -1 })
+      .limit(10);
 
     res.status(200).send(advertsInCategory);
 
@@ -276,6 +277,69 @@ exports.approveAdvert = async (req, res) => {
   }
 };
 
+const approveAdvertByAdmin = async (req, res) => {
 
+  const advertID = req.params.advertId;
+  const userID = req.user.profileID;
 
-module.exports = { newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert, getAdvertsByCategory };
+  try {
+
+    const result = await Advert.findOneAndUpdate({ _id: advertID, status: 'in review', delete: false }, { status: 'approved' }, { new: true });
+
+    if (!result) {
+      return res.status(404).json({ message: 'Advertisement not found' });
+    }
+
+    const notBox = await NotificationsBox.findOne({ userID: result.userId });
+    notBox.notifications.push({ type: 'add_approved', advertId: advertID });
+    await notBox.save();
+
+    res.status(200).send(result);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+const rejectAdvertByAdmin = async (req, res) => {
+
+  const advertID = req.params.advertId;
+
+  try {
+
+    const result = await Advert.findOneAndUpdate({ _id: advertID, status: 'in review', delete: false }, { status: 'rejected' }, { new: true });
+
+    if (!result) {
+      return res.status(404).json({ message: 'Advertisement not found' });
+    }
+
+    const notBox = await NotificationsBox.findOne({ userID: result.userId });
+    notBox.notifications.push({ type: 'add_rejected', advertId: advertID });
+    await notBox.save();
+
+    res.status(200).send(result);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+const getInReviewAdvertByAdmin = async (req, res) => {
+
+  try {
+    const result = await Advert.find({ status: 'in review', delete: false, sold: false });
+
+    res.status(200).send(result);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+module.exports = {
+  newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert,
+  getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin
+};

@@ -1,6 +1,5 @@
 const Category = require('../Models/Category.model');
 
-// create a category by an admin
 const createCategory = async (req, res) => {
   try {
     const name = req.body.name;
