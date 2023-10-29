@@ -24,9 +24,6 @@ router.get('/get/:advertId', authMiddleware.authenticateUser, advertController.g
 
 router.get('/get/:categoryId', authMiddleware.authenticateUser ,advertController.getAdvertsByCategory);
 
-// Get advertisements that have been reviewed and match a search criteria
-// router.get('/search', advertController.getReviewedAdvertsBySearch);
-
 router.patch('/:advertId/mark-sold', authMiddleware.authenticateUser, advertController.markAdvertSold);
 
 router.patch('/admin/approve/:advertId', authMiddleware.authenticateAdmin ,advertController.approveAdvertByAdmin);
