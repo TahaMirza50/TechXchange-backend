@@ -13,7 +13,7 @@ const notificationsBoxSchema = new Schema({
             {
                 type: {
                     type: String,
-                    enum: ['fav_add_sold', 'add_approved', 'message_received'],
+                    enum: ['fav_add_sold', 'add_approved', 'message_received', 'add_rejected'],
                     required: true
                 },
                 advertId: { 

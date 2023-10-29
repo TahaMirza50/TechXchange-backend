@@ -10,6 +10,10 @@ const chatRoomSchema = new Schema({
         ref: "UserProfile",
         required: true
     }],
+    disabled: {
+        type: Boolean,
+        default: false
+    },
     messages: [{
         userID: { 
             type: Schema.Types.ObjectId, 
