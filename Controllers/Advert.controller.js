@@ -188,25 +188,25 @@ const getAdvertsByCategory = async (req, res) => {
 };
 
 // Get advertisements that have been reviewed and match a search criteria
-exports.getAdvertsBySearch = async (req, res) => {
-  const { searchTerm } = req.query;
+// exports.getAdvertsBySearch = async (req, res) => {
+//   const { searchTerm } = req.query;
 
-  try {
-    // Find advertisements that match the search term and are not soft-deleted
-    const matchedAdverts = await Advertisement.find({
-      $text: { $search: searchTerm },
-      isDeleted: { $ne: true }, // Exclude soft-deleted ads
-    });
+//   try {
+//     // Find advertisements that match the search term and are not soft-deleted
+//     const matchedAdverts = await Advertisement.find({
+//       $text: { $search: searchTerm },
+//       isDeleted: { $ne: true }, // Exclude soft-deleted ads
+//     });
 
-    if (!matchedAdverts.length) {
-      return res.status(404).json({ message: 'No matching advertisements found' });
-    }
+//     if (!matchedAdverts.length) {
+//       return res.status(404).json({ message: 'No matching advertisements found' });
+//     }
 
-    res.json(matchedAdverts);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-};
+//     res.json(matchedAdverts);
+//   } catch (err) {
+//     res.status(500).send(err);
+//   }
+// };
 
 const markAdvertSold = async (req, res) => {
 
