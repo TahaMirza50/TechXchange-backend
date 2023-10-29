@@ -14,4 +14,6 @@ router.patch('/new/upload/:advertId', authMiddleware.authenticateUser,upload.arr
 
 router.get('/admin/:advertId', authMiddleware.authenticateAdmin, advertController.getAdvertByAdmin);
 
+router.get('/', authMiddleware.authenticateUser, advertController.getAdvertbySearchQuery)
+
 module.exports = router

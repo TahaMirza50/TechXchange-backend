@@ -78,4 +78,20 @@ const getAdvertByAdmin = async (req,res) => {
     }
 };
 
-module.exports = { newAdvert, getAdvertByAdmin, newAdvertUploadImage };
+const getAdvertbySearchQuery = async (req,res) => {
+
+  try{
+    const adverts = Advert.find({price: req.body.price, location: req.body.location, title: req.body.title, status: 'approved', delete: false})
+        .sort({timestamp: -1})
+    
+    if (!adverts) {
+      return res.status(404).send('No advertisements found')
+    }
+    res.status(200).json(adverts)
+  } catch(error){
+    console.error(error)
+    res.status(500)
+  }
+}
+
+module.exports = { newAdvert, getAdvertByAdmin, newAdvertUploadImage, getAdvertbySearchQuery };
