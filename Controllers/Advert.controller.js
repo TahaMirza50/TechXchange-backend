@@ -82,8 +82,7 @@ const getAdvertByAdmin = async (req, res) => {
   }
 };
 
-
-const getAdvertbySearchQuery = async (req, res) => {
+const getAdvertBySearchQuery = async (req, res) => {
   console.log()
   try {
     const adverts = await Advert.find({
@@ -103,8 +102,6 @@ const getAdvertbySearchQuery = async (req, res) => {
     res.status(500);
   }
 }
-
-
 
 const updateAdvert = async (req, res) => {
 
@@ -150,6 +147,37 @@ const deleteAdvert = async (req, res) => {
       const userWishlist = await UserWishlist.findById(userProfile.wishlistID);
       userWishlist.wishlist.pull(advertID);
       await userWishlist.save();
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+
+};
+
+const deleteAdvertByAdmin = async (req, res) => {
+  const advertID = req.params.advertId;
+
+  try {
+    const result = await Advert.findOneAndUpdate({ _id: advertID, delete: false }, { delete: true }, { new: true });
+  
+    if (!result) {
+      return res.status(404).json({ message: 'Advertisement not found' });
+    }
+
+    for (const part of result.wishListedByUser) {
+      const userProfile = await UserProfile.findById(part).select('wishlistID');
+      const userWishlist = await UserWishlist.findById(userProfile.wishlistID);
+      userWishlist.wishlist.pull(advertID);
+      await userWishlist.save();
+    }
+
+    const updatedChatRooms = await ChatRoom.find({ advertId: advertID, disabled: false });
+    for (const chat of updatedChatRooms) {
+      chat.disabled = true;
+      await chat.save();
     }
 
     res.status(200).send(result);
@@ -211,8 +239,6 @@ const getAdvertsByCategory = async (req, res) => {
   }
 };
 
-
-
 const markAdvertSold = async (req, res) => {
 
   const advertId = req.params.advertId;
@@ -255,7 +281,6 @@ const markAdvertSold = async (req, res) => {
 const approveAdvertByAdmin = async (req, res) => {
 
   const advertID = req.params.advertId;
-  const userID = req.user.profileID;
 
   try {
 
@@ -316,5 +341,5 @@ const getInReviewAdvertByAdmin = async (req, res) => {
 
 module.exports = {
   newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert, markAdvertSold, deleteAdvert,
-  getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin, getAdvertbySearchQuery
+  getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin, getAdvertBySearchQuery, deleteAdvertByAdmin
 };

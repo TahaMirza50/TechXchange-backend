@@ -29,7 +29,7 @@ app.use('/api/advert',advertRoutes)
 app.use('/api/chatroom',chatRoomRoutes);
 app.use('/api/wishlist',wishlistRoutes)
 app.use('/api/notifications',notificationRoutes)
-app.use('/api/reviewforms', reviewRoutes)
+app.use('/api/review-forms', reviewRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/report',reportRoutes);
 app.use('/api/category',categoryRoutes);

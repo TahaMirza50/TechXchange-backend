@@ -183,7 +183,7 @@ const sendMessage = async (req, res) => {
 
 const getChatroom = async (req, res) => {
     
-    const advertID = req.params.advertid
+    const advertID = req.params.advertId
     const id = req.user.profileID
     if (!mongoose.Types.ObjectId.isValid(advertID) || !mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).send("invalid id")
