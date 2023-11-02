@@ -82,6 +82,30 @@ const getAdvertByAdmin = async (req, res) => {
   }
 };
 
+
+const getAdvertbySearchQuery = async (req, res) => {
+  console.log()
+  try {
+    const adverts = await Advert.find({
+      title: { $regex: req.body.title, $options: 'i' },
+      price: { $gte: req.body.minPrice, $lte: req.body.maxPrice },
+      location: req.body.location,
+      status: "approved",
+      delete: false,
+    }).sort({ timestamp: -1 });
+
+    if (adverts.length == 0) {
+      return res.status(404).send('No advertisements found');
+    }
+    res.status(200).json(adverts);
+  } catch (error) {
+    console.error(error);
+    res.status(500);
+  }
+}
+
+
+
 const updateAdvert = async (req, res) => {
 
   const userID = req.user.profileID;
@@ -187,26 +211,7 @@ const getAdvertsByCategory = async (req, res) => {
   }
 };
 
-// Get advertisements that have been reviewed and match a search criteria
-// exports.getAdvertsBySearch = async (req, res) => {
-//   const { searchTerm } = req.query;
 
-//   try {
-//     // Find advertisements that match the search term and are not soft-deleted
-//     const matchedAdverts = await Advertisement.find({
-//       $text: { $search: searchTerm },
-//       isDeleted: { $ne: true }, // Exclude soft-deleted ads
-//     });
-
-//     if (!matchedAdverts.length) {
-//       return res.status(404).json({ message: 'No matching advertisements found' });
-//     }
-
-//     res.json(matchedAdverts);
-//   } catch (err) {
-//     res.status(500).send(err);
-//   }
-// };
 
 const markAdvertSold = async (req, res) => {
 
@@ -311,5 +316,5 @@ const getInReviewAdvertByAdmin = async (req, res) => {
 
 module.exports = {
   newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert, markAdvertSold, deleteAdvert,
-  getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin
+  getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin, getAdvertbySearchQuery
 };
