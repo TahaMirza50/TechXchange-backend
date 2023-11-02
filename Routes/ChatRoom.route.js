@@ -11,8 +11,8 @@ router.delete('/delete/:chatRoomID', authMiddleware.authenticateUser, chatRoomCo
 
 router.post('/create', authMiddleware.authenticateUser, chatRoomController.createChatRoom);
 
-router.patch('/sendmessage', authMiddleware.authenticateUser, chatRoomController.sendMessage);
+router.patch('/send-message', authMiddleware.authenticateUser, chatRoomController.sendMessage);
 
-router.get('/advert/:advertid', authMiddleware.authenticateUser, chatRoomController.getChatroom)
+router.get('/advert/:advertId', authMiddleware.authenticateUser, chatRoomController.getChatroom)
 
 module.exports = router;
