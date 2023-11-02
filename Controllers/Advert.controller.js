@@ -160,6 +160,37 @@ const deleteAdvert = async (req, res) => {
 
 };
 
+const deleteAdvertByAdmin = async (req, res) => {
+  const advertID = req.params.advertId;
+
+  try {
+    const result = await Advert.findOneAndUpdate({ _id: advertID, delete: false }, { delete: true }, { new: true });
+  
+    if (!result) {
+      return res.status(404).json({ message: 'Advertisement not found' });
+    }
+
+    for (const part of result.wishListedByUser) {
+      const userProfile = await UserProfile.findById(part).select('wishlistID');
+      const userWishlist = await UserWishlist.findById(userProfile.wishlistID);
+      userWishlist.wishlist.pull(advertID);
+      await userWishlist.save();
+    }
+
+    const updatedChatRooms = await ChatRoom.find({ advertId: advertID, disabled: false });
+    for (const chat of updatedChatRooms) {
+      chat.disabled = true;
+      await chat.save();
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+
+};
+
 const getAllAdvertsOfUser = async (req, res) => {
   const userID = req.user.profileID;
 

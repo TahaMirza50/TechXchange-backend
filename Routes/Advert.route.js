@@ -18,6 +18,8 @@ router.patch('update/:advertId', authMiddleware.authenticateUser, advertControll
 
 router.delete('/:advertId/delete', authMiddleware.authenticateUser, advertController.deleteAdvert);
 
+router.delete('/admin/:advertId/delete', authMiddleware.authenticateAdmin, advertController.deleteAdvertByAdmin);
+
 router.get('/get', authMiddleware.authenticateUser, advertController.getAllAdvertsOfUser);
 
 router.get('/get/:advertId', authMiddleware.authenticateUser, advertController.getAdvert);
