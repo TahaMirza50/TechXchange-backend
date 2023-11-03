@@ -83,7 +83,6 @@ const getAdvertByAdmin = async (req, res) => {
 };
 
 const getAdvertBySearchQuery = async (req, res) => {
-  console.log()
   try {
     const adverts = await Advert.find({
       title: { $regex: req.body.title, $options: 'i' },
@@ -215,8 +214,8 @@ const getAdvert = async (req, res) => {
       return res.status(404).json({ message: 'Advertisement not found' });
     }
 
-    res.status(200).send(result);
-  } catch (err) {
+    res.status(200).send(advert);
+  } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
@@ -227,7 +226,7 @@ const getAdvertsByCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
 
   try {
-    const advertsInCategory = await Advertisement.find({ category: categoryId, delete: false, status: 'approved' })
+    const advertsInCategory = await Advert.find({ categoryId: categoryId, delete: false, status: 'approved' })
       .sort({ timestamp: -1 })
       .limit(10);
 
