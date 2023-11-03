@@ -14,7 +14,7 @@ router.patch('/new/upload/:advertId', authMiddleware.authenticateUser,upload.arr
 
 router.get('/admin/get/:advertId', authMiddleware.authenticateAdmin, advertController.getAdvertByAdmin);
 
-router.patch('update/:advertId', authMiddleware.authenticateUser, advertController.updateAdvert);
+router.patch('/update/:advertId', authMiddleware.authenticateUser, advertController.updateAdvert);
 
 router.delete('/delete/:advertId', authMiddleware.authenticateUser, advertController.deleteAdvert);
 
@@ -24,7 +24,7 @@ router.get('/get', authMiddleware.authenticateUser, advertController.getAllAdver
 
 router.get('/get/:advertId', authMiddleware.authenticateUser, advertController.getAdvert);
 
-router.get('/get/:categoryId', authMiddleware.authenticateUser ,advertController.getAdvertsByCategory);
+router.get('/get/category/:categoryId', authMiddleware.authenticateUser ,advertController.getAdvertsByCategory);
 
 router.patch('/mark-sold/:advertId', authMiddleware.authenticateUser, advertController.markAdvertSold);
 

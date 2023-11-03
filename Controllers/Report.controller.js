@@ -39,7 +39,7 @@ const getAllReportsByAdmin = async (req, res) => {
     try {
         const reports = await UserReport.find()
             .populate('userId', 'firstName lastName')
-            .populate('advertId', 'title', 'delete');
+            .populate('advertId', 'title delete');
         res.status(200).send(reports);
     } catch (error) {
         console.log(error)
