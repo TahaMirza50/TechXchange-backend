@@ -82,9 +82,7 @@ const getAdvertByAdmin = async (req, res) => {
   }
 };
 
-
-const getAdvertbySearchQuery = async (req, res) => {
-  console.log()
+const getAdvertBySearchQuery = async (req, res) => {
   try {
     const adverts = await Advert.find({
       title: { $regex: req.body.title, $options: 'i' },
@@ -103,8 +101,6 @@ const getAdvertbySearchQuery = async (req, res) => {
     res.status(500);
   }
 }
-
-
 
 const updateAdvert = async (req, res) => {
 
@@ -160,6 +156,37 @@ const deleteAdvert = async (req, res) => {
 
 };
 
+const deleteAdvertByAdmin = async (req, res) => {
+  const advertID = req.params.advertId;
+
+  try {
+    const result = await Advert.findOneAndUpdate({ _id: advertID, delete: false }, { delete: true }, { new: true });
+  
+    if (!result) {
+      return res.status(404).json({ message: 'Advertisement not found' });
+    }
+
+    for (const part of result.wishListedByUser) {
+      const userProfile = await UserProfile.findById(part).select('wishlistID');
+      const userWishlist = await UserWishlist.findById(userProfile.wishlistID);
+      userWishlist.wishlist.pull(advertID);
+      await userWishlist.save();
+    }
+
+    const updatedChatRooms = await ChatRoom.find({ advertId: advertID, disabled: false });
+    for (const chat of updatedChatRooms) {
+      chat.disabled = true;
+      await chat.save();
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+
+};
+
 const getAllAdvertsOfUser = async (req, res) => {
   const userID = req.user.profileID;
 
@@ -187,8 +214,8 @@ const getAdvert = async (req, res) => {
       return res.status(404).json({ message: 'Advertisement not found' });
     }
 
-    res.status(200).send(result);
-  } catch (err) {
+    res.status(200).send(advert);
+  } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
@@ -199,7 +226,7 @@ const getAdvertsByCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
 
   try {
-    const advertsInCategory = await Advertisement.find({ category: categoryId, delete: false, status: 'approved' })
+    const advertsInCategory = await Advert.find({ categoryId: categoryId, delete: false, status: 'approved' })
       .sort({ timestamp: -1 })
       .limit(10);
 
@@ -210,8 +237,6 @@ const getAdvertsByCategory = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
-
-
 
 const markAdvertSold = async (req, res) => {
 
@@ -255,7 +280,6 @@ const markAdvertSold = async (req, res) => {
 const approveAdvertByAdmin = async (req, res) => {
 
   const advertID = req.params.advertId;
-  const userID = req.user.profileID;
 
   try {
 
@@ -316,5 +340,5 @@ const getInReviewAdvertByAdmin = async (req, res) => {
 
 module.exports = {
   newAdvert, getAdvertByAdmin, newAdvertUploadImage, updateAdvert, getAllAdvertsOfUser, getAdvert, markAdvertSold, deleteAdvert,
-  getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin, getAdvertbySearchQuery
+  getAdvertsByCategory, approveAdvertByAdmin, rejectAdvertByAdmin, getInReviewAdvertByAdmin, getAdvertBySearchQuery, deleteAdvertByAdmin
 };

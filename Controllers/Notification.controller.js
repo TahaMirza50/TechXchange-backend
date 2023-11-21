@@ -30,7 +30,7 @@ const deleteNotification = async (req,res) => {
         const notificationBox = await NotificationsBox.findOne({userID: id})
         
         notificationBox.notifications = notificationBox.notifications.filter((notification) => {
-            return notification._id != req.params.notid;
+            return notification._id != req.params.notId;
         })
         await notificationBox.save()
        res.status(200).send('notification deleted successfully')

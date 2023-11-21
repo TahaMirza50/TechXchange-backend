@@ -4,17 +4,17 @@ const UserWishlist = require('../Models/UserWishlist.model')
 
 const addAdvertWishlist = async (req, res) => {
 
-    const advertid = req.params.advertid
+    const advertId = req.params.advertId
     const id = req.user.profileID
-    if (!mongoose.Types.ObjectId.isValid(advertid) || !mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(advertId) || !mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).send("invalid id")
     }
 
     try{
         const userWishlist = await UserWishlist.findOne({userId: id})
-        const advert = await Advert.findById(advertid)
+        const advert = await Advert.findById(advertId)
         advert.wishListedByUser.push(id)
-        userWishlist.wishlist.push(advertid)
+        userWishlist.wishlist.push(advertId)
         await advert.save()
         await userWishlist.save()
         res.status(200).send("advert added to wishlist successfully!")
@@ -27,20 +27,20 @@ const addAdvertWishlist = async (req, res) => {
 
 const removeAdvertWishlist = async (req, res) => {
 
-    const advertid = req.params.advertid
+    const advertId = req.params.advertId
     const id = req.user.profileID
-    if (!mongoose.Types.ObjectId.isValid(advertid) || !mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(advertId) || !mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).send("invalid id")
     }
 
     try{
         const userWishlist = await UserWishlist.findOne({userId: id})
-        const advert = await Advert.findById(advertid)
+        const advert = await Advert.findById(advertId)
         advert.wishListedByUser = advert.wishListedByUser.filter((userProfileId) => {
             return userProfileId != id
         })
         userWishlist.wishlist = userWishlist.wishlist.filter( (id) => {
-            return id != advertid
+            return id != advertId
         })
         await advert.save()
         await userWishlist.save()

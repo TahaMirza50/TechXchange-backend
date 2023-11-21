@@ -14,17 +14,19 @@ router.patch('/new/upload/:advertId', authMiddleware.authenticateUser,upload.arr
 
 router.get('/admin/get/:advertId', authMiddleware.authenticateAdmin, advertController.getAdvertByAdmin);
 
-router.patch('update/:advertId', authMiddleware.authenticateUser, advertController.updateAdvert);
+router.patch('/update/:advertId', authMiddleware.authenticateUser, advertController.updateAdvert);
 
-router.delete('/:advertId/delete', authMiddleware.authenticateUser, advertController.deleteAdvert);
+router.delete('/delete/:advertId', authMiddleware.authenticateUser, advertController.deleteAdvert);
+
+router.delete('/admin/delete/:advertId', authMiddleware.authenticateAdmin, advertController.deleteAdvertByAdmin);
 
 router.get('/get', authMiddleware.authenticateUser, advertController.getAllAdvertsOfUser);
 
 router.get('/get/:advertId', authMiddleware.authenticateUser, advertController.getAdvert);
 
-router.get('/get/:categoryId', authMiddleware.authenticateUser ,advertController.getAdvertsByCategory);
+router.get('/get/category/:categoryId', authMiddleware.authenticateUser ,advertController.getAdvertsByCategory);
 
-router.patch('/:advertId/mark-sold', authMiddleware.authenticateUser, advertController.markAdvertSold);
+router.patch('/mark-sold/:advertId', authMiddleware.authenticateUser, advertController.markAdvertSold);
 
 router.patch('/admin/approve/:advertId', authMiddleware.authenticateAdmin ,advertController.approveAdvertByAdmin);
 
@@ -32,6 +34,6 @@ router.patch('/admin/reject/:advertId', authMiddleware.authenticateAdmin ,advert
 
 router.get('/admin/get', authMiddleware.authenticateAdmin, advertController.getInReviewAdvertByAdmin);
 
-router.get('/', authMiddleware.authenticateUser, advertController.getAdvertbySearchQuery)
+router.get('/', authMiddleware.authenticateUser, advertController.getAdvertBySearchQuery)
 
 module.exports = router

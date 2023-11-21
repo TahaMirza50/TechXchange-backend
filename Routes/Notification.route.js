@@ -7,6 +7,6 @@ const authMiddleware = require('../Middleware/Auth.middleware')
 
 router.get('/', authMiddleware.authenticateUser ,notificationController.getNotificationBox)
 
-router.delete('/deletenotification/:notid', authMiddleware.authenticateUser,notificationController.deleteNotification)
+router.delete('/delete/:notId', authMiddleware.authenticateUser,notificationController.deleteNotification)
 
 module.exports = router

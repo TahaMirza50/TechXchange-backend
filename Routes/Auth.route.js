@@ -9,6 +9,6 @@ router.post('/register', authController.register);
 
 router.post('/login', authController.login);
 
-router.post('/getaccesstoken', authMiddleware.authenticateRefresh, authController.getAccessToken);
+router.get('/get-access-token', authMiddleware.authenticateRefresh, authController.getAccessToken);
 
 module.exports = router;
