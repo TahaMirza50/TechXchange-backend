@@ -90,9 +90,14 @@ const login = async (req, res) => {
     try {
         if (await bcrypt.compare(req.body.password, user.password)) {
             console.log(user.profileID)
-            const accessToken = jwt.sign({ profileID: user.profileID, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-            const refreshToken = jwt.sign({ profileID: user.profileID, role: user.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
-            res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
+            const accessToken = jwt.sign({ email:req.body.email,profileID: user.profileID, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            const refreshToken = jwt.sign({ email:req.body.email,profileID: user.profileID, role: user.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: true, // Mark as secure (requires HTTPS)
+                sameSite: 'Lax', // Mitigate CSRF
+              });
+            res.status(200).json({accessToken});
         } else {
             return res.status(400).send("Password doesn't match.");
         };
