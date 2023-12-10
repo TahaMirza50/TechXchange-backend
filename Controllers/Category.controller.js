@@ -28,11 +28,23 @@ const getAllCategoriesByAdmin = async (req, res) => {
 
     const categories = await Category.find();
 
-    res.status(201).send(categories);
+    res.status(200).send(categories);
   } catch (err) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
 };
 
-module.exports = { createCategory, getAllCategoriesByAdmin };
+const getAllCategories = async (req, res) => {
+  try {
+
+    const categories = await Category.find();
+    res.status(200).send(categories);
+  } catch (err) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+module.exports = { createCategory, getAllCategoriesByAdmin, getAllCategories };

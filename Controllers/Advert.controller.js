@@ -228,7 +228,7 @@ const getAdvertsByCategory = async (req, res) => {
   try {
     const advertsInCategory = await Advert.find({ categoryId: categoryId, delete: false, status: 'approved' })
       .sort({ timestamp: -1 })
-      .limit(10);
+      .limit(4);
 
     res.status(200).send(advertsInCategory);
 
