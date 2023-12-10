@@ -94,8 +94,8 @@ const login = async (req, res) => {
             const refreshToken = jwt.sign({ email:req.body.email,profileID: user.profileID, role: user.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
-                secure: true, // Mark as secure (requires HTTPS)
-                sameSite: 'Lax', // Mitigate CSRF
+                secure: true, 
+                sameSite: 'Lax',
               });
             res.status(200).json({accessToken});
         } else {

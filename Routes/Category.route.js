@@ -8,4 +8,6 @@ router.post('/admin/create', authMiddleware.authenticateAdmin, categoryControlle
 
 router.get('/admin/all', authMiddleware.authenticateAdmin, categoryController.getAllCategoriesByAdmin);
 
+router.get('/', authMiddleware.authenticateUser, categoryController.getAllCategories);
+
 module.exports = router;

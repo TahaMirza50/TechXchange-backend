@@ -13,6 +13,8 @@ router.post('/create', authMiddleware.authenticateUser, chatRoomController.creat
 
 router.patch('/send-message', authMiddleware.authenticateUser, chatRoomController.sendMessage);
 
+router.patch('/delete-message', authMiddleware.authenticateUser, chatRoomController.deleteMessage);
+
 router.get('/advert/:advertId', authMiddleware.authenticateUser, chatRoomController.getChatroom)
 
 module.exports = router;
