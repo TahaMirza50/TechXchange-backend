@@ -57,7 +57,7 @@ const getProfileById = async (req,res) => {
 
     try {  
 
-        const result = await UserProfile.findById(req.params.profileId).select('firstName lastName contact address CNIC rating socialMediaLinks');
+        const result = await UserProfile.findById(req.params.profileId).select('firstName lastName contact address CNIC rating socialMediaLinks numberOfReviews');
 
         if (!result) {
             return res.status(404).json({ error: 'No profile found.' });
