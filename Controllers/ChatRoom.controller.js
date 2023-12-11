@@ -14,16 +14,25 @@ const getAllChatRooms = async (req, res) => {
     try {
         const result = await UserProfile.findById(req.user.profileID).select('chatRooms').populate({
             path: 'chatRooms',
-            populate: {
-              path: 'participants', 
-              select: 'firstName lastName'
-            }
-          });
+            populate: [
+                {
+                    path: 'participants',
+                    select: 'firstName lastName'
+                },
+                {
+                    path: 'messages',
+                    populate: {
+                        path: 'userID',
+                        select: 'firstName lastName'
+                    }
+                }
+            ]
+        });
 
         res.status(200).send(result)
     } catch (error) {
         console.log(error)
-        res.status(500)
+        res.status(500).send();
     }
 
 };
@@ -161,9 +170,7 @@ const sendMessage = async (req, res) => {
                     userProfile.chatRooms.push(chatID);
                     await userProfile.save();
                 }
-                console.log(userProfile.notificationsID);
                 const notBox = await NotificationsBox.findById(userProfile.notificationsID);
-                console.log(notBox)
                 notBox.notifications.push({ type: "message_received", advertId: chat.advertId });
                 await notBox.save();
             }
@@ -176,29 +183,62 @@ const sendMessage = async (req, res) => {
         res.status(200).send(chat);
 
     } catch (error) {
-        console.log(error)
-        res.status(500)
+        console.log(error);
+        res.status(500).send();
     }
 };
 
 const getChatroom = async (req, res) => {
-    
+
     const advertID = req.params.advertId
     const id = req.user.profileID
-    if (!mongoose.Types.ObjectId.isValid(advertID) || !mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(advertID) || !mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).send("invalid id")
     }
-    
 
-    try{
-        const chatRoom = await ChatRoom.findOne({advertId: advertID, participants: { $in: [id] }})
+    try {
+        const chatRoom = await ChatRoom.findOne({ advertId: advertID, participants: { $in: [id] } }).populate({
+            path: 'participants',
+            select: 'firstName lastName'
+        }).populate({
+            path: 'messages',
+            populate: {
+                path: 'userID',
+                select: 'firstName lastName'
+            }
+        });
+
         res.status(200).json(chatRoom)
     }
-    catch(error){
+    catch (error) {
         console.log(error)
-        res.status(500)
+        res.status(500).send();
     }
-    
+
 }
 
-module.exports = { getAllChatRooms, deleteChatRoom, createChatRoom, sendMessage, getChatroom };
+const deleteMessage = async (req, res) => {
+
+    const id = req.user.profileID;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).send("invalid id")
+    }
+
+    const chatID = req.body.chatID;
+    const messageID = req.body.messageID;
+
+    try {
+        await ChatRoom.updateOne(
+            { _id: chatID },
+            { $pull: { messages: { _id: messageID,userID:id } } })
+        
+        res.status(200).send();
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500).send();
+    }
+}
+
+module.exports = { getAllChatRooms, deleteChatRoom, createChatRoom, sendMessage, getChatroom, deleteMessage };
