@@ -10,7 +10,7 @@ const advertController = require('../Controllers/Advert.controller');
 
 router.post('/new', authMiddleware.authenticateUser, advertController.newAdvert);
 
-router.patch('/new/upload/:advertId', authMiddleware.authenticateUser,upload.array('images', 5), advertController.newAdvertUploadImage);
+router.patch('/new/upload/:advertId', authMiddleware.authenticateUser,upload.array('images', 3), advertController.newAdvertUploadImage);
 
 router.get('/admin/get/:advertId', authMiddleware.authenticateAdmin, advertController.getAdvertByAdmin);
 
