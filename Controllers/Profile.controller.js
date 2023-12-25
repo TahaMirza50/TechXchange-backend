@@ -10,10 +10,11 @@ const getProfile = async (req, res) => {
     }
 
     try{
-        userProfile = await UserProfile.findById(id)
+        const userProfile = await UserProfile.findById(id)
         if(!userProfile) {
             return res.status(404).send('No such Profile')
         }
+        console.log(userProfile)
         res.status(200).json(userProfile)
     }
     catch(error){
