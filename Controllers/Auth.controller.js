@@ -109,7 +109,7 @@ const login = async (req, res) => {
 };
 
 const getAccessToken = async (req,res) => {
-    const accessToken = jwt.sign({ profileID: req.user.profileID, role: req.user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+    const accessToken = jwt.sign({ email:req.user.email, profileID: req.user.profileID, role: req.user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
     res.status(200).json({accessToken: accessToken});
 };
 
