@@ -33,7 +33,7 @@ const authenticateUser = (req,res,next) => {
 
 const authenticateRefresh = (req,res,next) => {
     const token = req.cookies.refreshToken;
-    if(token == null) return res.sendStatus(401);
+    if(token == null) return res.sendStatus(400);
     jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err,user) => {
         if(err) return res.sendStatus(403);
         
