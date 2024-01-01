@@ -115,8 +115,7 @@ const getAccessToken = async (req, res) => {
 const logout = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
-    // if (refreshToken === null) return res.sendStatus(403);
-    console.log("aoicalled")
+    if (refreshToken === null) return res.sendStatus(400);
     res.clearCookie('refreshToken', {
         httpOnly: true,
         secure: true,
