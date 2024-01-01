@@ -84,23 +84,47 @@ const getAdvertByAdmin = async (req, res) => {
 
 const getAdvertBySearchQuery = async (req, res) => {
   try {
-    const adverts = await Advert.find({
-      title: { $regex: req.body.title, $options: 'i' },
-      price: { $gte: req.body.minPrice, $lte: req.body.maxPrice },
-      location: req.body.location,
+    console.log("hello world")
+    const query = {
       status: "approved",
       delete: false,
-    }).sort({ timestamp: -1 });
+    };
 
-    if (adverts.length == 0) {
+    if (req.query.title) {
+      query.$or = [
+        { title: { $regex: req.query.title, $options: 'i' } },
+        { description: { $regex: req.query.title, $options: 'i' } },
+      ];
+    }
+
+    if (req.query.minPrice || req.query.maxPrice) {
+      query.price = {};
+      if (req.query.minPrice) {
+        query.price.$gte = req.query.minPrice;
+      }
+      if (req.query.maxPrice) {
+        query.price.$lte = req.query.maxPrice;
+      }
+    }
+
+    if (req.query.location) {
+      query.location = req.query.location;
+    }
+
+    const adverts = await Advert.find(query).sort({ timestamp: -1 });
+
+    if (adverts.length === 0) {
       return res.status(404).send('No advertisements found');
     }
     res.status(200).json(adverts);
   } catch (error) {
     console.error(error);
-    res.status(500);
+    res.status(500).send('Internal Server Error');
   }
-}
+};
+
+
+
 
 const updateAdvert = async (req, res) => {
 
