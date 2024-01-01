@@ -84,7 +84,6 @@ const getAdvertByAdmin = async (req, res) => {
 
 const getAdvertBySearchQuery = async (req, res) => {
   try {
-    console.log("hello world")
     const query = {
       status: "approved",
       delete: false,
