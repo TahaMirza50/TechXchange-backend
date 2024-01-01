@@ -43,6 +43,8 @@ const register = async (req, res) => {
             CNIC: req.body.CNIC,
             birthday: req.body.birthday,
             socialMediaLinks: req.body.socialMediaLinks,
+            ratings: 0,
+            numberOfReviews: 0,
         });
 
         wishlist = new UserWishlist({
