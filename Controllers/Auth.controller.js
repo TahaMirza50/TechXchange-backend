@@ -89,15 +89,14 @@ const login = async (req, res) => {
 
     try {
         if (await bcrypt.compare(req.body.password, user.password)) {
-            console.log(user.profileID)
-            const accessToken = jwt.sign({ email:req.body.email,profileID: user.profileID, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-            const refreshToken = jwt.sign({ email:req.body.email,profileID: user.profileID, role: user.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
+            const accessToken = jwt.sign({ email: req.body.email, profileID: user.profileID, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            const refreshToken = jwt.sign({ email: req.body.email, profileID: user.profileID, role: user.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
-                secure: true, 
+                secure: true,
                 sameSite: 'Lax',
-              });
-            res.status(200).json({accessToken});
+            });
+            res.status(200).json({ accessToken });
         } else {
             return res.status(400).send("Password doesn't match.");
         };
@@ -108,9 +107,24 @@ const login = async (req, res) => {
 
 };
 
-const getAccessToken = async (req,res) => {
-    const accessToken = jwt.sign({ profileID: req.user.profileID, role: req.user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-    res.status(200).json({accessToken: accessToken});
+const getAccessToken = async (req, res) => {
+    const accessToken = jwt.sign({ email: req.user.email, profileID: req.user.profileID, role: req.user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ accessToken: accessToken });
 };
 
-module.exports = { register, login, getAccessToken };
+const logout = async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    // if (refreshToken === null) return res.sendStatus(403);
+    console.log("aoicalled")
+    res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Lax',
+    });
+
+    return res.status(200).send('Logged out successfully');
+
+};
+
+module.exports = { register, login, getAccessToken, logout };
