@@ -226,7 +226,7 @@ const getAdvertsByCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
 
   try {
-    const advertsInCategory = await Advert.find({ categoryId: categoryId, delete: false, status: 'approved' })
+    const advertsInCategory = await Advert.find({ categoryId: categoryId, delete: false, status: 'approved', sold: false })
       .sort({ timestamp: -1 })
       .limit(4);
 
