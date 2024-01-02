@@ -25,6 +25,10 @@ const getAllChatRooms = async (req, res) => {
                         path: 'userID',
                         select: 'firstName lastName'
                     }
+                },
+                {
+                    path: 'advertId',
+                    select: 'title'
                 }
             ]
         });
@@ -53,7 +57,6 @@ const deleteChatRoom = async (req, res) => {
             for (const part of chat.participants) {
 
                 const userChatRooms = await UserProfile.findById(part).select('chatRooms');
-                console.log(userChatRooms);
                 if (part == userID) {
 
                     const newArray = userChatRooms.chatRooms.filter(item => item != chatID);
@@ -91,15 +94,15 @@ const createChatRoom = async (req, res) => {
     try {
 
         const filter = {
-            'advertID': req.body.advertID,
-            'participants': { $all: req.body.participants }
+            advertId: req.body.advertId,
+            participants: { $all: req.body.participants }
         };
 
         const result = await ChatRoom.findOne(filter);
-
+        
         if (result == null) {
             chatRoom = new ChatRoom({
-                advertId: req.body.advertID,
+                advertId: req.body.advertId,
             });
 
             chatRoom.participants.push(req.body.participants[0]);
@@ -129,8 +132,10 @@ const createChatRoom = async (req, res) => {
                     const userProfile = await UserProfile.findById(part);
 
                     if (userProfile) {
-                        userProfile.chatRooms.push(result._id);
-                        await userProfile.save();
+                        if (!userProfile.chatRooms.includes(result._id)) {
+                            userProfile.chatRooms.push(result._id);
+                            await userProfile.save();
+                        }
                     }
                     else {
                         return res.status(404).json({ error: 'No such Profile' })
@@ -195,7 +200,6 @@ const getChatroom = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(advertID) || !mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).send("invalid id")
     }
-
     try {
         const chatRoom = await ChatRoom.findOne({ advertId: advertID, participants: { $in: [id] } }).populate({
             path: 'participants',
@@ -206,6 +210,9 @@ const getChatroom = async (req, res) => {
                 path: 'userID',
                 select: 'firstName lastName'
             }
+        }).populate({
+            path: 'advertId',
+            select: 'title'
         });
 
         res.status(200).json(chatRoom)
@@ -231,10 +238,10 @@ const deleteMessage = async (req, res) => {
     try {
         await ChatRoom.updateOne(
             { _id: chatID },
-            { $pull: { messages: { _id: messageID,userID:id } } })
-        
+            { $pull: { messages: { _id: messageID, userID: id } } })
+
         res.status(200).send();
-        
+
     } catch (error) {
         console.log(error)
         res.status(500).send();
