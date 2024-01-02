@@ -4,6 +4,7 @@ const Schema = mongoose.Schema
 const chatRoomSchema = new Schema({
     advertId: {
         type: Schema.Types.ObjectId,
+        ref: "Advert",
     },
     participants: [{
         type: Schema.Types.ObjectId,
