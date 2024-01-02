@@ -5,19 +5,19 @@ const getProfile = async (req, res) => {
 
     const id = req.user.profileID
 
-    if (!mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).send('invalid')
     }
 
-    try{
-        const userProfile = await UserProfile.findById(id)
-        if(!userProfile) {
+    try {
+        const userProfile = await UserProfile.findById(id).populate({ path: 'wishlistID', select: 'wishlist' })
+        if (!userProfile) {
             return res.status(404).send('No such Profile')
         }
         console.log(userProfile)
         res.status(200).json(userProfile)
     }
-    catch(error){
+    catch (error) {
         console.log(error)
         res.status(500)
     }
@@ -26,37 +26,37 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     const id = req.user.profileID
 
-    if (!mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).send('invalid')
     }
 
-    try{
-        const userProfile = await UserProfile.findOneAndUpdate({_id: id}, {
+    try {
+        const userProfile = await UserProfile.findOneAndUpdate({ _id: id }, {
             ...req.body
         })
-    
-        if(!userProfile) {
+
+        if (!userProfile) {
             return res.status(404).send('No such Profile')
         }
-    
+
         res.status(200).json(userProfile)
     }
-    catch(error){
+    catch (error) {
         console.log(error)
         res.status(500)
     }
-    
+
 };
 
-const getProfileById = async (req,res) => {
+const getProfileById = async (req, res) => {
 
     const id = req.user.profileID
 
-    if (!mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).send('invalid')
     }
 
-    try {  
+    try {
 
         const result = await UserProfile.findById(req.params.profileId).select('firstName lastName contact address CNIC rating socialMediaLinks numberOfReviews');
 
@@ -65,7 +65,7 @@ const getProfileById = async (req,res) => {
         }
 
         res.status(200).send(result);
-        
+
     } catch (error) {
         console.log(error)
         res.status(500)
@@ -74,4 +74,4 @@ const getProfileById = async (req,res) => {
 };
 
 
-module.exports = {getProfile, updateProfile, getProfileById}
+module.exports = { getProfile, updateProfile, getProfileById }
