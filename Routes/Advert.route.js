@@ -34,6 +34,6 @@ router.patch('/admin/reject/:advertId', authMiddleware.authenticateAdmin ,advert
 
 router.get('/admin/get', authMiddleware.authenticateAdmin, advertController.getInReviewAdvertByAdmin);
 
-router.get('/', authMiddleware.authenticateUser, advertController.getAdvertBySearchQuery)
+router.get('/search', authMiddleware.authenticateUser, advertController.getAdvertBySearchQuery)
 
 module.exports = router
