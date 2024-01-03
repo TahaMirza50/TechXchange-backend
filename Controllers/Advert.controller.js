@@ -112,6 +112,10 @@ const getAdvertBySearchQuery = async (req, res) => {
       query.location = req.query.location;
     }
 
+    if (req.query.categoryId) {
+      query.categoryId = req.query.categoryId;
+    }
+
     const adverts = await Advert.find(query).sort({ timestamp: -1 });
 
     if (adverts.length === 0) {
