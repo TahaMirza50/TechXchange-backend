@@ -83,9 +83,11 @@ const getAdvertByAdmin = async (req, res) => {
 };
 
 const getAdvertBySearchQuery = async (req, res) => {
+  console.log("hello")
   try {
     const query = {
       status: "approved",
+      sold:false,
       delete: false,
     };
 
@@ -108,6 +110,10 @@ const getAdvertBySearchQuery = async (req, res) => {
 
     if (req.query.location) {
       query.location = req.query.location;
+    }
+
+    if (req.query.categoryId) {
+      query.categoryId = req.query.categoryId;
     }
 
     const adverts = await Advert.find(query).sort({ timestamp: -1 });
@@ -249,7 +255,7 @@ const getAdvertsByCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
 
   try {
-    const advertsInCategory = await Advert.find({ categoryId: categoryId, delete: false, status: 'approved' })
+    const advertsInCategory = await Advert.find({ categoryId: categoryId, delete: false, status: 'approved', sold: false })
       .sort({ timestamp: -1 })
       .limit(4);
 
